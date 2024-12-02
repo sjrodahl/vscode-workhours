@@ -1,0 +1,62 @@
+{
+  "name": "workhours",
+  "displayName": "Work Hours",
+  "description": "Track work hours from vscode!",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "workhours.start",
+        "title": "Work hours: Start Tracking"
+      },
+      {
+        "command": "workhours.stop",
+        "title": "Work hours: Stop Tracking"
+      },
+      {
+        "command": "workhours.show",
+        "title": "Work hours: Show Tracked Time"
+      },
+      {
+        "command": "workhours.edit",
+        "title": "Work hours: Open and edit history"
+      },
+      {
+        "command": "workhours.selectProject",
+        "title": "Work hours: Select Project"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "prettier": "prettier . --write"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.95.0",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.13.0",
+    "prettier": "3.4.2",
+    "typescript": "^5.6.3"
+  }
+}
