@@ -118,6 +118,15 @@ export function activate(context: vscode.ExtensionContext) {
     },
   );
 
+  const setCurrentProjectAsDefaultCommand = vscode.commands.registerCommand(
+    "workhours.setCurrentProjectAsDefault",
+    () => {
+      vscode.workspace
+        .getConfiguration("workhours")
+        .update("defaultProject", currentProject);
+    },
+  );
+
   const editCommand = vscode.commands.registerCommand("workhours.edit", () => {
     if (fs.existsSync(storageFilePath)) {
       vscode.workspace.openTextDocument(storageFilePath).then((doc) => {
@@ -138,6 +147,7 @@ export function activate(context: vscode.ExtensionContext) {
     stopCommand,
     showCommand,
     selectProjectCommand,
+    setCurrentProjectAsDefaultCommand,
     editCommand,
     summarizeCommand,
   );
