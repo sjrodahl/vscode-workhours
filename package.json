@@ -30,6 +30,10 @@
         "title": "Work hours: Open and edit history"
       },
       {
+        "command": "workhours.summarize",
+        "title": "Work hours: Summarize history: merge same-day same-projects sessions"
+      },
+      {
         "command": "workhours.selectProject",
         "title": "Work hours: Select Project"
       }

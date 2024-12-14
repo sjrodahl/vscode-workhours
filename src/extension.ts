@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
-import { WorkSession } from "./workhours/WorkSession";
+import { mergeWorkSessions, WorkSession } from "./workhours/WorkSession";
 
 let currentSession: WorkSession | null = null;
 let storageFilePath: string;
@@ -24,7 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   // Load existing time data
-  loadSessionHistory();
+  sessionHistory = loadSessionHistory(storageFilePath);
 
   // Create status bar item
   statusBarItem = vscode.window.createStatusBarItem(
@@ -60,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
     if (currentSession) {
       currentSession.stop();
       sessionHistory.push(currentSession);
-      saveSessionHistory();
+      saveSessionHistory(sessionHistory, storageFilePath);
       vscode.window.showInformationMessage(
         `Time tracking stopped. Total time: ${currentSession.getDuration().toFixed(2)} hours.`,
       );
@@ -119,19 +119,25 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
+  const summarizeCommand = vscode.commands.registerCommand(
+    "workhours.summarize",
+    saveHistorySummarized,
+  );
+
   context.subscriptions.push(
     startCommand,
     stopCommand,
     showCommand,
     selectProjectCommand,
     editCommand,
+    summarizeCommand,
   );
 }
 
 export function deactivate() {
   if (currentSession) {
     currentSession.stop();
-    saveSessionHistory();
+    saveSessionHistory(sessionHistory, storageFilePath);
   }
   if (statusBarInterval) {
     clearInterval(statusBarInterval);
@@ -165,25 +171,44 @@ function reviveDate(key: string, value: any) {
     : value;
 }
 
-const loadSessionHistory = () => {
-  if (fs.existsSync(storageFilePath)) {
+export function loadSessionHistory(path: string): WorkSession[] {
+  let sessions: WorkSession[] = [];
+  if (fs.existsSync(path)) {
     try {
-      const data = fs.readFileSync(storageFilePath, "utf8");
-      sessionHistory = JSON.parse(data, reviveDate);
+      const data = fs.readFileSync(path, "utf8");
+      let json = JSON.parse(data, reviveDate);
+      sessions = json.map(
+        (it: any) =>
+          new WorkSession(
+            it.description,
+            it.projectTag,
+            it.startTime,
+            it.endTime,
+            it.duration,
+          ),
+      );
     } catch (error) {
       vscode.window.showErrorMessage("Failed to load time data: " + error);
     }
   }
-};
+  return sessions;
+}
 
-const saveSessionHistory = () => {
+export const saveSessionHistory = (history: WorkSession[], path: string) => {
   try {
-    fs.writeFileSync(
-      storageFilePath,
-      JSON.stringify(sessionHistory, null, 4),
-      "utf8",
-    );
+    fs.writeFileSync(path, JSON.stringify(history, null, 4), "utf8");
   } catch (error) {
     vscode.window.showErrorMessage("Failed to save time data: " + error);
   }
+};
+
+export const saveHistorySummarized = () => {
+  let hist = loadSessionHistory(storageFilePath);
+  let beforeCount = hist.length;
+  let mergedHist = mergeWorkSessions(hist);
+  let afterCount = mergedHist.length;
+  saveSessionHistory(mergedHist, storageFilePath);
+  vscode.window.showInformationMessage(
+    `Merged sessions from ${beforeCount} to ${afterCount}`,
+  );
 };

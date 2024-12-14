@@ -88,9 +88,27 @@ suite("WorkSession Class", () => {
     session3.startTime = new Date("2024-12-03T08:00:00.000Z");
     session3.endTime = new Date("2024-12-03T10:00:00.000Z");
 
-    const mergedSessions = mergeWorkSessions([session1, session2, session3]);
+    const ongoingSession = new WorkSession(
+      "Ongoing sessions should not be merged",
+      "Project A",
+    );
+    ongoingSession.startTime = new Date("2024-12-03T08:00:00.000Z");
 
-    assert.strictEqual(mergedSessions.length, 2);
+    const noProjectSession = new WorkSession(
+      "Session with no project should not be merged",
+    );
+    noProjectSession.startTime = new Date("2024-12-03T14:00:00.000Z");
+    noProjectSession.endTime = new Date("2024-12-03T15:00:00.000Z");
+
+    const mergedSessions = mergeWorkSessions([
+      session1,
+      session2,
+      session3,
+      ongoingSession,
+      noProjectSession,
+    ]);
+
+    assert.strictEqual(mergedSessions.length, 4);
 
     const mergedSession = mergedSessions.find(
       (s) => s.projectTag === "Project A",

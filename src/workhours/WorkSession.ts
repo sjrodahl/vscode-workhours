@@ -5,9 +5,18 @@ export class WorkSession {
   projectTag?: string;
   duration?: number;
 
-  constructor(description?: string, projectTag?: string) {
+  constructor(
+    description?: string,
+    projectTag?: string,
+    startTime?: Date,
+    endTime?: Date,
+    duration?: number,
+  ) {
     this.description = description;
     this.projectTag = projectTag;
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.duration = duration;
   }
 
   public start(): void {
@@ -38,7 +47,7 @@ export function mergeWorkSessions(sessions: WorkSession[]): WorkSession[] {
   const groupedSessions: { [key: string]: WorkSession[] } = {};
 
   sessions.forEach((session) => {
-    if (session.startTime && session.projectTag) {
+    if (session.startTime && session.endTime && session.projectTag) {
       const key = `${session.startTime.toISOString().split("T")[0]}-${session.projectTag}`;
       if (!groupedSessions[key]) {
         groupedSessions[key] = [];
@@ -46,7 +55,9 @@ export function mergeWorkSessions(sessions: WorkSession[]): WorkSession[] {
       groupedSessions[key].push(session);
     }
   });
-
+  const unmergedSessions: WorkSession[] = sessions.filter(
+    (session) => !session.startTime || !session.endTime || !session.projectTag,
+  );
   const mergedSessions: WorkSession[] = Object.values(groupedSessions).map(
     (group) => {
       const earliestStartTime = group.reduce(
@@ -73,7 +84,6 @@ export function mergeWorkSessions(sessions: WorkSession[]): WorkSession[] {
       const mergedDescription = group
         .map((session) => session.description)
         .join(". ");
-      console.log(mergedDescription);
 
       const mergedSession = new WorkSession(
         mergedDescription,
@@ -86,6 +96,5 @@ export function mergeWorkSessions(sessions: WorkSession[]): WorkSession[] {
       return mergedSession;
     },
   );
-
-  return mergedSessions;
+  return [...mergedSessions, ...unmergedSessions];
 }
