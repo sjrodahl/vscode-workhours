@@ -15,27 +15,27 @@
     "commands": [
       {
         "command": "workhours.start",
-        "title": "Work hours: Start Tracking"
+        "title": "WorkHours: Start Tracking"
       },
       {
         "command": "workhours.stop",
-        "title": "Work hours: Stop Tracking"
+        "title": "WorkHours: Stop Tracking"
       },
       {
         "command": "workhours.show",
-        "title": "Work hours: Show Tracked Time"
+        "title": "WorkHours: Show Tracked Time"
       },
       {
         "command": "workhours.edit",
-        "title": "Work hours: Open and edit history"
+        "title": "WorkHours: Open and edit history"
       },
       {
         "command": "workhours.summarize",
-        "title": "Work hours: Summarize history: merge same-day same-projects sessions"
+        "title": "WorkHours: Summarize history: merge same-day same-projects sessions"
       },
       {
         "command": "workhours.selectProject",
-        "title": "Work hours: Select Project"
+        "title": "WorkHours: Select Project"
       }
     ],
     "configuration": {
