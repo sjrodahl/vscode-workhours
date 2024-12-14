@@ -10,6 +10,12 @@ let statusBarItem: vscode.StatusBarItem;
 let statusBarInterval: NodeJS.Timeout | null = null;
 
 let currentProject: string | undefined;
+const PROJECTS: string[] = [
+  "Solwr Robotics AS**: 1145: R&D Grab 2024: Picking operations and gripper/tool changer design",
+  "Solwr Robotics AS**: 1145: R&D Grab 2024: Design and operation improvements for scaling",
+  "Solwr Robotics AS**: 1147: R&D Sort 2024",
+  "Solwr Robotics AS: 2022999: R&D OWL - Optimization and learning for Warehouse Logistics: WP2 Adaptation and improvement of SotA",
+];
 
 export function activate(context: vscode.ExtensionContext) {
   storageFilePath = path.join(
@@ -94,7 +100,7 @@ export function activate(context: vscode.ExtensionContext) {
     "workhours.selectProject",
     () => {
       vscode.window
-        .showQuickPick(["Project A", "Project B", "Project C"], {
+        .showQuickPick(PROJECTS, {
           placeHolder: "Select a project to track time under",
         })
         .then((project) => {
