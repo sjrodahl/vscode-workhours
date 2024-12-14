@@ -37,7 +37,17 @@
         "command": "workhours.selectProject",
         "title": "Work hours: Select Project"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "WorkHours",
+      "properties": {
+        "workhours.defaultProject": {
+          "type": "string",
+          "scope": "resource",
+          "description": "Set default project to track work hours"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

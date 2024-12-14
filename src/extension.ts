@@ -9,10 +9,9 @@ let sessionHistory: WorkSession[] = [];
 let statusBarItem: vscode.StatusBarItem;
 let statusBarInterval: NodeJS.Timeout | null = null;
 
-let currentProject: string;
+let currentProject: string | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
-  // Initialize the storage file path
   storageFilePath = path.join(
     context.globalStorageUri.fsPath,
     "workhours.json",
@@ -25,6 +24,10 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Load existing time data
   sessionHistory = loadSessionHistory(storageFilePath);
+
+  currentProject = vscode.workspace
+    .getConfiguration("workhours")
+    .get<string>("defaultProject");
 
   // Create status bar item
   statusBarItem = vscode.window.createStatusBarItem(
