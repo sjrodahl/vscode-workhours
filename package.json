@@ -49,6 +49,12 @@
           "type": "string",
           "scope": "resource",
           "description": "Set default project to track work hours"
+        },
+        "workhours.autostart": {
+          "type": "boolean",
+          "scope": "window",
+          "default": false,
+          "description": "Start tracking work hours when opening vscode"
         }
       }
     }

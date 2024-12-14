@@ -35,6 +35,12 @@ export function activate(context: vscode.ExtensionContext) {
     .getConfiguration("workhours")
     .get<string>("defaultProject");
 
+  if (
+    vscode.workspace.getConfiguration("workhours").get<boolean>("autostart")
+  ) {
+    start();
+  }
+
   // Create status bar item
   statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
@@ -52,34 +58,10 @@ export function activate(context: vscode.ExtensionContext) {
 
   const startCommand = vscode.commands.registerCommand(
     "workhours.start",
-    () => {
-      if (!currentSession) {
-        currentSession = new WorkSession("Coding session", currentProject);
-        currentSession.start();
-        vscode.window.showInformationMessage("Time tracking started!");
-      } else {
-        vscode.window.showInformationMessage(
-          "A session is already in progress.",
-        );
-      }
-    },
+    start,
   );
 
-  const stopCommand = vscode.commands.registerCommand("workhours.stop", () => {
-    if (currentSession) {
-      currentSession.stop();
-      sessionHistory.push(currentSession);
-      saveSessionHistory(sessionHistory, storageFilePath);
-      vscode.window.showInformationMessage(
-        `Time tracking stopped. Total time: ${currentSession.getDuration().toFixed(2)} hours.`,
-      );
-      currentSession = null;
-    } else {
-      vscode.window.showInformationMessage(
-        "No session is currently in progress.",
-      );
-    }
-  });
+  const stopCommand = vscode.commands.registerCommand("workhours.stop", stop);
 
   const showCommand = vscode.commands.registerCommand("workhours.show", () => {
     vscode.window.showInformationMessage(
@@ -162,6 +144,32 @@ export function deactivate() {
     clearInterval(statusBarInterval);
   }
 }
+
+const start = () => {
+  if (!currentSession) {
+    currentSession = new WorkSession("Coding session", currentProject);
+    currentSession.start();
+    vscode.window.showInformationMessage("Time tracking started!");
+  } else {
+    vscode.window.showInformationMessage("A session is already in progress.");
+  }
+};
+
+const stop = () => {
+  if (currentSession) {
+    currentSession.stop();
+    sessionHistory.push(currentSession);
+    saveSessionHistory(sessionHistory, storageFilePath);
+    vscode.window.showInformationMessage(
+      `Time tracking stopped. Total time: ${currentSession.getDuration().toFixed(2)} hours.`,
+    );
+    currentSession = null;
+  } else {
+    vscode.window.showInformationMessage(
+      "No session is currently in progress.",
+    );
+  }
+};
 
 const updateStatusBar = () => {
   if (statusBarItem) {
